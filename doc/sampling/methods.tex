@@ -1,0 +1,110 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{amsmath, amsthm, amsfonts, amssymb}
+\usepackage{graphicx,hyperref}
+\usepackage{microtype, parskip}
+\usepackage[comma,sort&compress]{natbib}
+\usepackage{docmute}
+
+\frenchspacing
+
+\begin{document}
+\section{Methods}
+
+\subsection{Fossil occurrence information}
+Foote and Miller data.
+
+\subsection{Hierarchical counting model}
+First, define \(y_{i}\) as some count of fossil occurrences of genus \(j\) in a geologic stage for \(i = 1, \dots, n\) and \(j = 1, \dots, J\).
+
+The Poisson distribution is used as the simplest model of count data, such as the number of observed fossils. The Poisson distribution has one parameter \(\lambda\) which is a ``rate'' or inverse-scale parameter. \(\lambda\) can be interpreted as the expected count observed \(\mathbf{E}[y]\). \(\lambda\) can be reparameterized for use in regression using the log link function \(\mathbf{E}[y] = \exp(\alpha)\) where \(\alpha\) can be any real number \citep{Gelman2007}. This is written as
+\begin{align}
+  y_{i} &\sim \mathrm{Poisson}(\lambda_{i}) \nonumber\\
+  \lambda_{i} &= \exp(\alpha_{i}).
+  \label{eq:poisson} 
+\end{align}
+
+Currently, this model (Eq. \ref{eq:poisson}) does not take into account the generic membership \(j\) of the fossil count and assumes that all genera have the same sighting rate. To account for variation in occurrence rate between genera while also modeling mean generic occurrence rate I take a Bayesian hierarchical modeling approach \citep{Gelman2007,Gelman2013b}. First, I redefine \(\alpha_{i}\) as \(\alpha_{j[i]}\) to indicate that observation \(i\) is a member of genus \(j\). I then assume that genera can be considered exchangeable or that the actual value of \(j\) has no meaning. Given this assumption, values of \(\alpha_{j[i]}\) are given the following normally distributed prior 
+\begin{equation}
+  \alpha_{j[i]} \sim \mathcal{N}(\mu, \sigma_{j}).
+  \label{eq:alpha_step1}
+\end{equation}
+The scale hyperparameter \(\sigma_{j}\) (Eq. \ref{eq:alpha_step1}) is then estimated from the data itself. This approach allows genera with small sample size to pull towards the mean of the prior (\(\mu\)) while still genera with large sample sizes and strong effects to be modeled. Because \(\sigma_{j}\) is the standard deviation of the overall genus-level rate of occurrence per collection, values of \(\sigma_{j}\) close to 0 indicate complete pooling/congruence between all genera while high values of \(\sigma_{j}\) no pooling or congruence between genera \citep{Gelman2013b}.
+
+This hierarchical approach can be further extended to account for a genus' class membership. Define \(k\) as the class that genus \(j\) belongs to, where \(k = 1, \dots, K\). Then, instead of assuming that \(\mu\) is equal for all classes (Eq. \ref{eq:alpha_step1}), instead the \(\mu\) is allowed to vary across classes and is written \(\mu_{k[j]}\). This is the estimate of the rate of fossil occurrence for classes \(k\). Then, assuming that classes are exchangeable, values of \(\mu_{k[j]}\) are given the same, shared hyperprior. These changes are then written as
+\begin{align}
+  \alpha_{j[i]} &\sim \mathcal{N}(\mu_{k[j]}, \sigma_{j}) \nonumber \\
+  \mu_{k[j]} &\sim \mathcal{N}(\psi, \sigma_{k}).
+  \label{eq:alpha_step2}
+\end{align}
+\(\psi\) here is an estimate of the mean class rate. Similar earlier (Eq. \ref{eq:alpha_step1}), the scale hyperparameter \(\sigma_{k}\) corresponds to the overall class-level rate of occurrence per collection. Values of \(\sigma_{k}\) cose 10 indicate completely pooling between all classes while high values correspond to no pooling of classes.
+
+The current model (Eq. \ref{eq:poisson}) does not take into account the number of chances to count an observation. For example, if counting the number of traffic accidents at a street corner it matters if 20 vehicles have passed through the intersection versus 100. To account for this we can define an exposure term \(u_{i}\) for each observation \citep{Gelman2007}. In this study, \(u_{i}\) is defined as the number of localities species \(i\) occurred in during the given stage. The inclusion of \(u_{i}\) is formulated as 
+\begin{align}
+  y_{i} &= \mathrm{Poisson}(u_{i}\lambda_{i}) \nonumber\\
+  \lambda_{i} &= \exp(\log(u_{i}) + \alpha_{j[i]}).
+  \label{eq:poisson_exposure}
+\end{align}
+The inclusion of \(\log(u_{i})\) in the parameterization of \(\lambda_{i}\) (Eq. \ref{eq:poisson_exposure}) is due to the following relationships 
+\begin{align*}
+  \frac{\mathbf{E}[y_i]}{u_{i}} &= \lambda_{i} \\
+  \mathbf{E}[y_{i}] &= u_{i}\lambda_{i} \\
+  \log(\mathbf{E}[y_{i}]) &= \log(u_{i}) + \log(\lambda_{i}) \\
+\end{align*}
+We can now interpret \(\lambda\) as the expected number of co-occurring species per locality for a given observation. While \(u_{i}\) is called the exposure, \(\log(u_{i})\) is called the offset \citep{Gelman2007}. 
+
+One of the major assumptions of the Poisson distribution is that, because there is only one parameter, the variance of the distribution is equal to the mean (\(\frac{Var[y]}{E[y]}\)). When variance is greater than the mean, this is called overdispersion. We can relax this assumption by assuming that, instead of a Poisson distribution, observations are drawn from a negative bionmial distribution \citep{Gelman2007}. Here, I use the following parameterization of the negative binomial 
+\begin{equation}
+  \mathrm{Negative\ binomial}(y | \eta, \phi) = {y + \phi -1 \choose y} \left(\frac{\eta}{\eta + \phi}\right)^{y} \left(\frac{\phi}{\eta + \phi}\right)^{\phi}
+  \label{eq:neg_bin}
+\end{equation}
+where \(\eta\) is the mean and \(\phi\) is the overdispersion. Substituting the negative binomial for the Poisson, the model as currently defined is written
+\begin{align}
+  y_{i} &= \mathrm{Negative\ binomial}(u_{i}\eta_{i}, \phi_{y}) \nonumber \\
+  \eta_{i} &= \exp(\alpha_{j[i]}) \nonumber \\
+  \alpha_{j[i]} &\sim \mathrm{Normal}(\mu_{k[j]}, \sigma_{j}) \nonumber \\
+  \mu_{k[j]} &\sim \mathrm{Normal}(\psi, \sigma_{k}).
+  \label{eq:nb_mod}
+\end{align}
+
+
+
+% further extensions
+%  zero-inflated? hurdle is inappropriate because we believe some of the 0s are real.
+%  allowing this to vary by class?
+
+% further complications
+%  allowing \phi to vary by class?
+
+
+
+Finally, given the Bayesian framework taken here, I have to assign priors to various non-hierarchically modeled parameters. Scale parameters were given weakly informative half-Cauchy (C\(^{+}\)) priors because they have good regulatory priors for constraining hierarchical effects \citep{Gelman2006,Gelman2013b}. For the location parameter \(\psi\), I used a weakly informative prior because it is expected that the most probable values do not have a very high magnitude, while still allowing for that possibility. The priors used here are
+\begin{align*}
+  \phi_{y} &\sim \mathrm{C}^{+}(2.5) \\
+  \sigma_{j} &\sim \mathrm{C}^{+}(2.5) \\
+  \psi &\sim \mathrm{Normal}(0, 10) \\
+  \sigma_{k} &\sim \mathrm{C}^{+}(2.5).
+\end{align*}
+The Cauchy distribution is equivalent to the \textit{t}-distribution with 1 degree of freedom, and the half-Cauchy distribution is the Cauchy folded about 0.
+
+
+% adding in covariates at different levels?
+%   individual level: lithology/paleoenv? epicontinent/ocean?
+%   generic level: geographic range?
+% additional complexities?
+%   individual level point-referenced spatial model?
+%   just need spatial covariance function
+
+
+\subsection{Model checking}
+Posterior predictive checks.
+
+\(y\) and \(y^{rep}\)
+
+count data residuals \citep{Gelman2007}
+
+raw residual: \(r_{i} = \sqrt{y_{i}} - \sqrt{y_{i}^{rep}}\)
+
+deviance residual: \(r_{i}^{D} = sign(y_{i} - y_{i}^{rep}) \left[y_{i} \log\left(\frac{y_{i}}{y_{i}^{rep}}\right) - (y_{i} - y_{i}^{rep})\right]^{1/2}\) though i'm not sure if i got this right. what is the derivation?
+
+\end{document}

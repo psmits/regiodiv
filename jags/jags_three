@@ -1,0 +1,27 @@
+model in "hmm_hierarchical.jags"
+data in "../data/data_dump/occurrence_dump.R"
+compile, nchains(1)
+parameters in "../data/data_dump/hmm_inits.R"
+initialize
+update 100000
+monitor psi, thin(100)
+monitor gamma, thin(100)
+monitor phi, thin(100)
+monitor p, thin(100)
+monitor gamma_mu, thin(100)
+monitor phi_mu, thin(100)
+monitor p_mu, thin(100)
+monitor gamma_sigma, thin(100)
+monitor phi_sigma, thin(100)
+monitor p_sigma, thin(100)
+monitor gamma_group, thin(100)
+monitor phi_group, thin(100)
+monitor p_group, thin(100)
+monitor gamma_sigma_group, thin(100)
+monitor phi_sigma_group, thin(100)
+monitor p_sigma_group, thin(100)
+monitor beta, thin(100)
+monitor alpha, thin(100)
+monitor turnover, thin(100)
+update 100000
+coda *, stem(three)

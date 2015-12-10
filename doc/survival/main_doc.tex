@@ -1,0 +1,150 @@
+\documentclass{article}
+
+\usepackage{amsmath, amsthm}
+\usepackage{setspace}
+\usepackage{microtype, parskip}
+\usepackage[comma,sort&compress]{natbib}
+\usepackage{lineno}
+\usepackage{docmute}
+\usepackage{caption, subcaption, multirow, morefloats, rotating}
+\usepackage{wrapfig}
+
+\frenchspacing
+
+\doublespacing
+
+\raggedright
+
+\begin{document}
+\linenumbers
+\modulolinenumbers[2]
+
+%\maketitle
+
+\begin{titlepage}
+  \begin{large}
+    \textbf{Title:} How do biological traits affect brachiopod taxonomic survival? A hierarchical Bayesian approach.
+  \end{large}
+
+  \textbf{Running title:} How do biological traits affect taxonomic survival?
+
+  \textbf{Author:} Peter D Smits, psmits@uchicago.edu, Committee on Evolutionary Biology, University of Chicago
+
+  \textbf{Keywords:} extinction, macroevolution, macroecology, Paleozoic, selection
+
+  \textbf{Word count:} ?
+  
+  \textbf{Table count:} 0.
+ 
+  \textbf{Figure count:} 5 main text, 3 supplement.
+
+  \textbf{Data archival location:} If accepted, all data and code necessary to duplicate this analysis will be made available on DRYAD.
+
+\end{titlepage}
+
+\input{abstract}
+
+\input{intro}
+
+\input{methods}
+
+\input{results}
+
+\input{disc}
+
+\section*{Acknowledgements}
+I would like to thank K. Angielzcyk, M. Foote, P. D. Polly, and R. Ree for helpful discussion and advice. Additionally, thank you A. Miller for the epicontinental versus open-ocean assignments. This entire study would would not have been possible without the Herculean effort of the many contributors to the Paleobiology Database. In particular, I would like to thank J. Alroy, M. Aberhan, D. Bottjer, M. Clapham, F. F\"{u}rsich, N. Heim, A. Hendy, S. Holland, L. Ivany, W. Kiessling, B. Kr\"{o}ger, A. McGowan, T. Olszewski, P. Novack-Gottshall, M. Patzkowsky, M. Uhen, L. Villier, and P. Wager. This work was supported by a NASA Exobiology grant (NNX10AQ446) to A. Miller and M. Foote. This is Paleobiology Database publication XXX.
+
+\clearpage
+
+\bibliographystyle{evolution}
+\bibliography{newbib,packages}
+
+\clearpage
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height = 0.5\textheight,width=\textwidth,keepaspectratio=true]{figure/survival_curves}
+  \caption{Comparison of empirical estimates of \(S(t)\) versus estimates from 1000 posterior predictive data sets. \(S(t)\) corresponds to \(P(T > t)\) as it is the probability that a given genus observed at age \(t\) will continue to live. This is equivalent to the probability that \(t\) is less than the genus' ultimate duration \(T\). Note that the Weibull (left) model has noticeably better fit to the data than the exponential (right).}
+  \label{fig:surv}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height = 0.5\textheight,width=\textwidth,keepaspectratio=true]{figure/environ_quad}
+  \caption{The overall expected relationship \(f(v_{i})\) between environmental affinity \(v_{i}\) and a multiplier of extinction risk (Eq. \ref{eq:env}). Each grey line corresponds to a single draw from the posterior predictive distribution, while the black corresponds to the median of the posterior predictive distribution. The overall shape of \(f(v_{i})\) is concave down with an optimum of close 0, which corresponds to affinity approximately equal to the expectation based on background environmental occurrence rates.}
+  \label{fig:env_mean}
+\end{figure}
+
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.5\textwidth}
+    \caption{}
+    \includegraphics[height = 0.5\textheight,width=\textwidth,keepaspectratio=true]{figure/wei_cor_heatmap}
+    \label{fig:omega}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.4\textwidth}
+    \caption{}
+    \includegraphics[height = 0.5\textheight,width=\textwidth,keepaspectratio=true]{figure/correlation_marginal}
+    \label{fig:corr}
+  \end{subfigure}
+  \caption{\textbf{A}: Heatmap for the median estimates of the terms of the correlation matrix \(\Omega\) between cohort-level covariate effects. Both the exponential (left) and Weibull (right) models are presented. The off-diagonal terms are the correlation between the estimates of the cohort-level estimates of the effects of covariates, along with intercept/baseline extinction risk. \textbf{B}: Marginal posterior distributions of the correlations between intercept terms/baseline extinction risk and the effects of each of the covariates. These are presented for both the exponential (left) and Weibull (right) models.}
+  \label{fig:cor_posterior}
+\end{figure}
+
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \caption{}
+    \includegraphics[width = \textwidth,keepaspectratio=true]{figure/intercept_cohort}
+    \label{fig:cohort_intercept}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{\textwidth}
+    \caption{}
+    \includegraphics[width = \textwidth,keepaspectratio=true]{figure/range_cohort}
+    \label{fig:cohort_range}
+  \end{subfigure}
+  \caption{Comparison of cohort-specific estimates of \(\beta_{0}\) presented along with the estimate for the overall baseline extinction risk. Points correspond to the median of the cohort-specific estimate, along with 80\% credible intervals. The horizontal line is the median estimate of the overall baseline extinction risk along with 80\% credible intervals. Results are presented for the exponential (top) and Weibull (bottom) models. Comparison of cohort-specific estimates of the effect of geographic range on extinction risk \(\beta_{r}\) presented along with the estimate for the overall effect of geographic range. Points correspond to the median of the cohort-specific estimate, along with 80\% credible intervals. The horizontal line is the median estimate of the overall baseline extinction risk along with 80\% credible intervals. Results are presented for the exponential (top) and Weibull (bottom) models.}
+  \label{fig:cohort_info}
+\end{figure}
+
+
+\begin{sidewaysfigure}[ht]
+  \centering
+  \includegraphics[height = 0.5\textheight,width=\textwidth,keepaspectratio=true]{figure/cohort_quads}
+  \caption{Comparison of the cohort-specific estimates of \(f(v_{i})\) (Eq. \ref{eq:env}) for the 33 analyzed origination cohorts. The stage of origination is labeled on the x-axis of each panel. The oldest stage is in the upper left, while the youngest is in the lower left. The number in each panel corresponds to the posterior probability that \(f(v_{i})\) is concave down. Those that are highlighed in red have less than 51\% posterior predictive probability that \(f(v_{i})\) is concave down.}
+  \label{fig:env_cohort}
+\end{sidewaysfigure}
+
+\begin{table}
+  \centering
+  \begin{tabular}{ l r r }
+    \hline
+    parameter & mean & standard deviation \\ 
+    \hline
+    \(\mu_{i}\) & -1.51 & 0.15 \\ 
+    \(\mu_{r}\) & -1.38 & 0.14 \\ 
+    \(\mu_{e}\) & -0.08 & 0.18 \\ 
+    \(\mu_{e2}\) & 0.25 & 0.43 \\ 
+    \(\mu_{m}\) & -0.09 & 0.09 \\ 
+    \(\tau_{i}\) & 0.63 & 0.11 \\ 
+    \(\tau_{r}\) & 0.48 & 0.12 \\ 
+    \(\tau_{e}\) & 1.07 & 0.23 \\ 
+    \(\tau_{e^{2}}\) & 1.88 & 0.66 \\ 
+    \(\tau_{m}\) & 0.32 & 0.13 \\ 
+    \hline
+  \end{tabular}
+  \caption{Group-level estimates of the intercept terms the effects of biological traits on brachiopod generic survival from equations \ref{eq:exp_total} and \ref{eq:wei_total}, presented as means and standard deviations. \(\mu\) values are the location parameters of the effects, while \(\tau\) values are the scale terms describing the variation between cohorts. The subscripts correspond to the following: \(i\) intercept, \(r\) geographic range, \(e\) environmental affinity, \(e^{2}\) environmental affinity squared, \(m\) body size.}
+  \label{tab:param}
+\end{table}
+
+\clearpage
+
+\appendix
+\input{appendix}
+
+
+\end{document}

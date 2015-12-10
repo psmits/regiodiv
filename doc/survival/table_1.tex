@@ -1,0 +1,45 @@
+\documentclass{article}
+
+\usepackage{amsmath, amsthm}
+\usepackage{setspace}
+\usepackage{microtype, parskip}
+\usepackage[comma,sort&compress]{natbib}
+\usepackage{lineno}
+\usepackage{docmute}
+\usepackage{caption, subcaption, multirow, morefloats, rotating}
+\usepackage{wrapfig}
+
+\frenchspacing
+
+\doublespacing
+
+\raggedright
+
+\begin{document}
+
+\begin{table}
+  \centering
+  \begin{tabular}{ l r r r r }
+    \hline
+    parameter & mean & standard deviation & 10\% & 90\% \\ 
+    \hline
+    \(\mu_{i}\) & -1.52 & 0.16 & -1.73 & -1.32 \\ 
+    \(\mu_{r}\) & -1.39 & 0.13 & -1.55 & -1.23 \\ 
+    \(\mu_{v}\) & -0.04 & 0.16 & -0.24 & 0.11 \\ 
+    \(\mu_{v2}\) & 0.30 & 0.45 & -0.07 & 0.97 \\ 
+    \(\mu_{m}\) & -0.07 & 0.08 & -0.19 & 0.01 \\ 
+    \(\tau_{i}\) & 0.77 & 0.14 & 0.61 & 0.95 \\ 
+    \(\tau_{r}\) & 0.40 & 0.13 & 0.24 & 0.56 \\ 
+    \(\tau_{v}\) & 1.05 & 0.23 & 0.79 & 1.35 \\ 
+    \(\tau_{v^{2}}\) & 1.87 & 0.64 & 1.10 & 2.68 \\ 
+    \(\tau_{m}\) & 0.24 & 0.13 & 0.07 & 0.40 \\ 
+    \hline
+  \end{tabular}
+  \caption{Group-level estimates of the intercept terms the effects of biological traits on brachiopod generic survival from equation 2. \(\mu\) values are the location parameters of the effects, while \(\tau\) values are the scale terms describing the variation between cohorts. The mean, standard deviation, 10th and 90th quantiles are presented for each estimate. The subscripts correspond to the following: \(i\) intercept, \(r\) geographic range, \(v\) environmental affinity, \(v^{2}\) environmental affinity squared, \(m\) body size.}
+  \label{tab:param}
+\end{table}
+
+
+\end{document}
+
+

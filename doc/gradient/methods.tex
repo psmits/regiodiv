@@ -1,0 +1,105 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{amsmath, amsthm}
+\usepackage{microtype, parskip}
+\usepackage[comma,numbers,sort&compress]{natbib}
+\usepackage{lineno}
+\usepackage{docmute}
+\usepackage{caption, subcaption, multirow, morefloats, rotating}
+\usepackage{wrapfig}
+
+\frenchspacing
+
+\begin{document}
+\section{Materials and Methods}
+\subsection{Taxon occurrence information}
+The dataset analyzed here was sourced from the Paleobiology Database (http://www.paleodb.org) which was then filtered based on taxonomic, temporal, stratigraphic, and other occurrence information that was necessary for this analysis. These filtering criteria are very similar to those from \citet{Foote2013}.
+
+Fossil occurrences were analyzed at the genus level which is common for paleobiological, macroevolutionary, or macroecological studies of marine invertebrates \citep{Alroy2010,Foote2013,Harnik2013,Kiessling2007a,Miller2009a,Nurnberg2013a,Nurnberg2015,Payne2007,Simpson2009,Vilhena2013}. Although species diversity dynamics tend to be of much greater interest than those of higher taxa, the nature of the fossil record makes accurate and precise taxonomic assignments at the species level for all occurrences extremely difficult if not impossible. Additionally, there is evidence of real differences in biological patterns at the genus level versus the species level \citep{Jablonski1987}. As such, the choice to analyze genera as opposed to species was in order to assure a minimum level of confidence and accuracy in the data analyzed here.
+
+Geographic regions were defined by dividing the globe into four latitudinal bands at the equator and both the tropics of Cancer and Capricorn (\(\pm 23.5^\circ\)). These boundary lines were chosen because they are defined independent of taxonomic occurrence and are constant throughout they are defined independent of taxonomic occurrence and are spatially constant throughout time. Tectonic plates, for example, while geologically constant are not spatially constant. Given that latitudinal diversity gradients are one of the focuses of this study, using spatially variable regions is inappropriate given that a given plate my transition from tropical to temperate or vice-versa.
+
+
+\subsection{Model specification}
+Taxon presence was modeled has a hierarchical hidden Markov model (HMM) where the three ``process parameters'' of gain/newly entering a province (\(\gamma\)), persistance/survival (\(\phi\)), and observation (\(p\)). For each province, each of these process parameters were modeled hierarchically so that estimates were allowed to vary over time but in cases of little information those estimates were drawn to the overall mean for that province. The estimates for each province were also estimated hierarchically in relation to each other; this way all estimates were relative to each other. The hierarchical structure of this model helps control for both overfitting and multiple comparisons during posterior analysis \citep{Gelman2007,Gelman2013d}. 
+
+Note that the following model is strongly inspired by the dynamic occupancy model presented in \citep{Royle2008}.
+
+\(y_{i, j, t}\) is the observed occurrence of taxon \(i\) in province \(j\) at time \(t\), where \(i = 1, 2, \dots, N\), \(j = 1, 2, \dots, J\), and \(t = 1, 2, \dots, T\). \(y = 1\) is occupied while \(y = 0\) is unoccupied. \(z_{i, j, t}\) is the ``true'' occurrence of taxon \(i\) in province \(j\) at time \(t\), given the estimate of sampling. Just as with \(y\), \(z = 1\) is occupied while \(z = 0\) is unoccupied. 
+
+\(\phi_{j, t}\) is the probability of surviving, in province \(j\), from time \(t\) to time \(t + 1\) (\(Pr(z_{t + 1} = 1 | z_{t} = 1)\)). \(\gamma_{j, t}\) is the probability of newly entering province \(j\) at time \(t + 1\) (\(Pr(z_{t + 1} = 1 | z_{t} = 0)\)). \(p_{j, t}\) is the probability of observing a true occurrence (\(Pr(y = 1 | z = 1)\)) in province \(j\) at time \(t\). 
+
+\(\psi\) is probability of sit occupancy/probability of occurrence (\(Pr(z_{i, t = 1} = 1)\). The first time point is defined in terms of \(\psi\) because there is (assumed) no previous time points.
+
+The parameters \(\phi\), \(\gamma\), and \(p\) are then all defined hierarchically within time bins as samples from the shared mean between provinces. \(\Phi_{t}\), \(\Gamma_{t}\), and \(P_{t}\) are the mean probabilities for a given point in time \(t\). \(M_{\phi}\), \(M_{\gamma}\), and \(M_{p}\) are the overall mean estimates of survival, origination, and preservation probabilities. 
+
+And finally, I use independent uniform priors for \(\psi_{j}\) by province \(j\): \(\psi_{j} \sim \mathrm{U}(0, 1)\).
+
+In total, the model can be summarized by the following statements:
+
+\begin{equation}
+  \begin{aligned}
+    y_{i, t, j} &\sim \mathrm{Bern}(p_{t, j} z_{i, t, j}) \\
+    z_{i, t = 1, j} &\sim \mathrm{Bern}(\psi_{j}) \\
+    z_{i, t, j} &\sim \mathrm{Bern}(\phi_{j, t - 1} z_{i, t - 1, j} + \gamma_{j, t - 1} (1 - z_{i, t - 1, j})) \\
+    \mathrm{logit}(\phi_{j, t}) &\sim \mathrm{N}(\Phi_{t}, \sigma_{\phi, t}) \\
+    \mathrm{logit}(\gamma_{j, t}) &\sim \mathrm{N}(\Gamma_{t}, \sigma_{\gamma, t}) \\
+    \mathrm{logit}(p_{j, t}) &\sim \mathrm{N}(P_{t}, \sigma_{p, j}) \\
+    \Phi_{i} &\sim \mathrm{N}(M_{\phi}, \sigma_{\Phi}) \\
+    \Gamma_{i} &\sim \mathrm{N}(M_{\gamma}, \sigma_{\Gamma}) \\
+    P_{i} &\sim \mathrm{N}(M_{p}, \sigma_{P}) \\
+    \sigma_{\phi, i} &\sim \mathrm{C}^{+}(1) \\
+    M_{\phi} &\sim \mathrm{N}(0, 1) \\
+    \sigma_{\Phi} &\sim \mathrm{C}^{+}(1) \\
+    \sigma_{\gamma, j} &\sim \mathrm{C}^{+}(1) \\
+    M_{\gamma} &\sim \mathrm{N}(0, 1) \\
+    \sigma_{\Gamma} &\sim \mathrm{C}^{+}(1) \\
+    \sigma_{p, j} &\sim \mathrm{C}^{+}(1) \\
+    M_{p} &\sim \mathrm{N}(0, 1) \\
+    \sigma_{P} &\sim \mathrm{C}^{+}(1) \\
+  \end{aligned}
+\end{equation}
+
+
+\subsection{Posterior inference}
+The joint posterior distribution of the HMM model was approximated using a Gibbs sampling MCMC routine as implemented in the JAGS probabilistic programming language CITATION. Four chains were each run for 100000 steps, thined to every 100th sample, and split evenly between warm-up and sampling phases. Chain sampling convergence was assessed using the \(\hat{R}\) statistic with values close to 1 (less than 1.1) indicating approximate convergence \citep{Gelman2013d}.
+
+% assessing model fit
+%   posterior predictive check
+%     simulate time series starting from t = 1
+%     compare observed to simulated
+% 80 / 20 split
+%   take a random 20% sample of taxa and set aside as ``test set''
+%   fit the model to the remaining 80% ``training set''
+%   after the model is fit, try to predict the observed pattern of test set
+
+
+% posterior inference
+% turnover
+% is this actually necessary as an estimate?
+%   would be extremely difficult to explain to a paleontological audience when they are thinking of a ratio of per captia rates and this is a probability.
+%   estimate number of 0 --> 1 changes (gains) and number of 1 --> 0 changes (losses) from time t to t - 1.
+%     already have the diversity estimate of each point in time.
+
+Given the estimate of the joint posterior distribution, some downstream metapopulation summary statistics can be calculated. Given the estimates of \(z\) it is trivial to calculate the number of taxa that newly enter or exit any region \(j\) at any time \(t\). Additionally, the net change in taxonomic diversity (entrances minus exits) can be calculated for any region \(j\) at any time \(t\).
+
+Turnover \(\tau\) defined as the probability that the occurrence of a taxon at time \(t\) is new (\(Pr(z_{t - 1} = 0 | z_{t} = 1)\)) \citep{Royle2008}. First, the occupancy probability \(\psi\) at times \(t = 2, \dots, T\) can calculated recursively as
+\begin{equation}
+  \psi_{t} = \psi_{t - 1}\phi_{t - 1} + (1 - \psi_{t - 1})\gamma_{t - 1}.
+\end{equation}
+Turnover can then be calculated as
+\begin{equation}
+  \tau_{t} = \frac{\gamma_{t - 1} (1 - \gamma_{t - 1}}{\gamma_{t - 1} (1 - \psi_{t - 1}) + \phi_{t - 1} \psi_{t - 1}}.
+\end{equation}
+An additional summary is the growth rate \(\lambda\) \citep{MacKenzie2003,Royle2008} which is calculated as
+\begin{equation}
+  \lambda_{t} = \frac{\psi_{t + 1}}{\psi_{t}}.
+\end{equation}
+
+% what does this mean?
+%The final summary static of interest is the equilibrium occupancy probability \citep{MacKenzie2006,Royle2008}
+%\begin{equation}
+%  \psi_{t}^{\text{eq}} = \frac{\gamma_{t}}{\gamma_{t} + (1 - \phi_{t})}
+%\end{equation}
+
+\end{document}

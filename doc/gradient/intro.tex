@@ -1,0 +1,35 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{amsmath, amsthm}
+\usepackage{microtype, parskip}
+\usepackage[comma,numbers,sort&compress]{natbib}
+\usepackage{lineno}
+\usepackage{docmute}
+\usepackage{caption, subcaption, multirow, morefloats, rotating}
+\usepackage{wrapfig}
+
+\frenchspacing
+
+\captionsetup[subfigure]{position = top, labelfont = bf, textfont = normalfont, singlelinecheck = off, justification = raggedright}
+
+\begin{document}
+\section{Introduction}
+
+% precision of question
+%   how does taxonomic entrance and loss contribute to regional/latitudinal diversity? 
+%   how do regions compare in terms of how diversity accumulates?
+The spatial context of how taxonomic diversity changes over time
+
+% latitudinal diversity gradients
+%   hypotheses as to why, in terms of diversification
+
+% Phanerozoic brachiopods
+%   previous work on diversification
+%   LDG
+
+Key to this study is the idea that any given taxon might leave a region and then re-enter it at a later time. This fact means that standard approaches which assume constant/range-through presence following initial occurrence until final occurrence \citep{Alroy2010c,Foote2003,Foote2000,Foote2000a,Smits2015,Liow2008,Liow2015,Silvestro2014a} are inappropriate as they do not capture the macroevolutionary process of interest. Additionally, given the imperfect record that is the fossil record, distinguishing between true absence and unobserved presence becomes an extremely goal when trying to understand the macroevolutionary processes of interest here.
+
+Here I choose to model regional diversity as a hidden Markov Model (HMM), which is how occupancy is modeled in ecology \citep{Royle2008}. In a HMM, the observed state of an individual is considered imperfectly observed, such that actually observing the ``true'' or latent state is done with some sampling probability. The actual diversification process affects the latent state of a taxon, which is itself estimated. A HMM is similar to a Jolly-Seber capture-mark-recapture model \citep{Liow2015,Royle2008} except the transition from 1 to 0 is not an absorbing state and taxa can ``return to life.''
+
+
+\end{document}
