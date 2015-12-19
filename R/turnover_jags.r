@@ -4,7 +4,24 @@ library(parallel)
 library(rjags)
 library(coda)
 library(rstan)
-load('../data/gradient_setup.rdata')
+source('../R/gts.r')
+source('../R/mung.r')
+
+data.file <- list.files('../data', pattern = 'Occs')
+fossil <- read.csv(paste0('../data/', data.file))
+bibr <- fossil
+
+lump.file <- list.files('../data', pattern = 'lump')
+lump <- read.csv(paste0('../data/', lump.file))
+
+shape <- readShapeSpatial('../data/ne_10m_coastline.shp')  # from natural earth
+
+sight <- space.time(bibr, 
+                    bins = 'StageNewOrdSplitNoriRhae20Nov2013', 
+                    gts = rev(as.character(lump[, 2])),
+                    cuts = 'Chang',
+                    bot = 'Trem',
+                    shape = shape)
 
 n <- 4
 sight <- sight[1:n]
